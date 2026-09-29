@@ -1,4 +1,6 @@
-# EquipFlow — Equipment Management Demo (Frontend MVP)
+# industrial-equipements
+
+EquipFlow — equipment management demo (frontend MVP).
 
 A **frontend-only**, production-shaped prototype for heavy equipment import & order operations: leads → orders → vendor import tracking (internal) → stock → pay-on-delivery.
 
