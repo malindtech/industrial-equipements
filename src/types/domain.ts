@@ -22,6 +22,19 @@ export type PaymentStatus = "pending" | "awaiting_confirmation" | "paid" | "disp
 
 export type ItemType = "full_machine" | "part" | "accessory";
 
+export type QuoteStatus = "draft" | "sent" | "accepted" | "expired";
+
+export type VendorPOStatus = "draft" | "sent" | "acknowledged";
+
+export type OrderDocumentType =
+  | "proforma"
+  | "invoice"
+  | "packing_list"
+  | "bill_of_lading"
+  | "other";
+
+export type DemoRole = "sales" | "operations" | "finance";
+
 export interface Customer {
   id: string;
   name: string;
@@ -46,6 +59,37 @@ export interface Lead {
   createdAt: string;
   customerId?: string;
   interestedProductIds?: string[];
+  nextFollowUpAt?: string;
+}
+
+export type InteractionChannel = "call" | "whatsapp" | "email" | "meeting";
+
+export interface LeadInteraction {
+  id: string;
+  leadId: string;
+  at: string;
+  channel: InteractionChannel;
+  summary: string;
+}
+
+export type ActivityEntityType =
+  | "order"
+  | "lead"
+  | "import"
+  | "payment"
+  | "quote"
+  | "customer"
+  | "product"
+  | "vendor";
+
+export interface ActivityEvent {
+  id: string;
+  at: string;
+  title: string;
+  detail: string;
+  entityType: ActivityEntityType;
+  entityId: string;
+  href: string;
 }
 
 export interface Vendor {
@@ -75,7 +119,6 @@ export interface Product {
   listPrice: number;
   currency: string;
   leadTimeDays: number;
-  /** Demo accent for product cards (no external images) */
   accent: string;
 }
 
@@ -104,17 +147,66 @@ export interface OrderLine {
   importShipmentId?: string;
 }
 
+export interface QuoteLine {
+  id: string;
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  fulfillment: "stock" | "vendor_import";
+}
+
+export interface Quote {
+  id: string;
+  reference: string;
+  leadId: string;
+  status: QuoteStatus;
+  lines: QuoteLine[];
+  currency: string;
+  sellingCountry: string;
+  validUntil: string;
+  notes: string;
+  createdAt: string;
+  sentAt?: string;
+  orderId?: string;
+}
+
 export interface Order {
   id: string;
   reference: string;
   customerId: string;
   leadId?: string;
+  quoteId?: string;
   status: OrderStatus;
   lines: OrderLine[];
   currency: string;
+  sellingCountry: string;
   notes: string;
   createdAt: string;
   expectedDelivery?: string;
+  deliveryScheduledAt?: string;
+  deliveredAt?: string;
+}
+
+export interface VendorPO {
+  id: string;
+  reference: string;
+  orderId: string;
+  vendorId: string;
+  importShipmentId?: string;
+  productIds: string[];
+  amount: number;
+  currency: string;
+  status: VendorPOStatus;
+  orderedAt?: string;
+  notes: string;
+}
+
+export interface OrderDocument {
+  id: string;
+  orderId: string;
+  type: OrderDocumentType;
+  name: string;
+  uploadedAt: string;
 }
 
 export interface TrackingEvent {
@@ -160,10 +252,53 @@ export interface Payment {
 export interface AppData {
   customers: Customer[];
   leads: Lead[];
+  leadInteractions: LeadInteraction[];
   vendors: Vendor[];
   products: Product[];
+  quotes: Quote[];
   orders: Order[];
+  vendorPOs: VendorPO[];
+  orderDocuments: OrderDocument[];
   imports: ImportShipment[];
   inventory: InventoryItem[];
   payments: Payment[];
+  activities: ActivityEvent[];
 }
+
+export type QuoteDraftInput = {
+  leadId: string;
+  currency: string;
+  sellingCountry: string;
+  validUntil: string;
+  notes: string;
+  lines: Omit<QuoteLine, "id">[];
+};
+
+export type CustomerInput = Omit<Customer, "id" | "createdAt">;
+
+export type VendorInput = Omit<Vendor, "id" | "productIds">;
+
+export type ProductInput = {
+  sku: string;
+  name: string;
+  type: ItemType;
+  industry: string;
+  shortDescription: string;
+  description: string;
+  vendorId: string;
+  listPrice: number;
+  currency: string;
+  leadTimeDays: number;
+  initialStock?: number;
+  stockLocation?: string;
+  unitCost?: number;
+};
+
+export type DirectOrderInput = {
+  customerId: string;
+  currency: string;
+  sellingCountry: string;
+  notes: string;
+  expectedDelivery?: string;
+  lines: Omit<QuoteLine, "id">[];
+};

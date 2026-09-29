@@ -16,6 +16,10 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { orderTotal } from "@/lib/orders";
 import type { OrderStatus } from "@/types/domain";
 import { ExternalLink } from "lucide-react";
+import { DeliveryPanel } from "@/components/orders/delivery-panel";
+import { DocumentsPanel } from "@/components/orders/documents-panel";
+import { VendorPOPanel } from "@/components/orders/vendor-po-panel";
+import { OrderSmartHeader } from "@/components/orders/order-smart-header";
 
 export default function OrderDetailPage() {
   const params = useParams();
@@ -31,6 +35,7 @@ export default function OrderDetailPage() {
     updateOrderStatus,
     confirmPayment,
     markPaymentPaid,
+    quotes,
   } = useAppStore();
 
   const order = orders.find((o) => o.id === id);
@@ -41,13 +46,14 @@ export default function OrderDetailPage() {
   const payment = payments.find((p) => p.orderId === order.id);
   const linkedImports = orderImports(order, imports);
   const workflow = buildOrderWorkflow(order, imports, payment);
+  const quote = order.quoteId ? quotes.find((q) => q.id === order.quoteId) : undefined;
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
       <PageHeader
         backHref="/orders"
         title={order.reference}
-        description={`${customer?.company ?? "Customer"} · Created ${formatDate(order.createdAt)}`}
+        description={`${customer?.company ?? "Customer"} · ${order.sellingCountry} · ${order.currency} · Created ${formatDate(order.createdAt)}`}
         action={
           <div className="flex flex-wrap items-center gap-2">
             <Badge tone={orderStatusTone[order.status]}>{orderStatusLabels[order.status]}</Badge>
@@ -55,6 +61,8 @@ export default function OrderDetailPage() {
           </div>
         }
       />
+
+      <OrderSmartHeader order={order} />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
@@ -123,6 +131,8 @@ export default function OrderDetailPage() {
             ) : null}
           </section>
 
+          <VendorPOPanel order={order} />
+
           {linkedImports.length > 0 ? (
             <section className="space-y-4">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
@@ -137,9 +147,12 @@ export default function OrderDetailPage() {
               No vendor import linked — this order is fulfilled entirely from stock.
             </section>
           )}
+
+          <DocumentsPanel order={order} />
         </div>
 
         <aside className="space-y-6">
+          <DeliveryPanel order={order} />
           <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
             <h2 className="text-sm font-semibold text-slate-900">Customer</h2>
             {customer ? (
@@ -178,6 +191,14 @@ export default function OrderDetailPage() {
               <Link href="/leads" className="mt-3 text-sm text-blue-600 hover:underline">
                 View leads pipeline
               </Link>
+            </div>
+          ) : null}
+
+          {quote ? (
+            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+              <h2 className="text-sm font-semibold text-slate-900">Source quote</h2>
+              <p className="mt-2 font-mono text-sm">{quote.reference}</p>
+              <p className="text-xs text-slate-500">Proforma accepted · pay on delivery</p>
             </div>
           ) : null}
 

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/layout/app-shell";
 import { StoreProvider } from "@/components/providers/store-provider";
+import { ToastHost } from "@/components/ui/toast-host";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <AppShell>
           <StoreProvider>{children}</StoreProvider>
+          <ToastHost />
         </AppShell>
       </body>
     </html>

@@ -20,6 +20,8 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/store/app-store";
+import { RoleSwitcher } from "@/components/role/role-switcher";
+import { GlobalSearch } from "@/components/search/global-search";
 
 const nav = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -71,7 +73,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
           <div>
             <p className="text-sm font-semibold leading-tight">EquipFlow</p>
-            <p className="text-xs text-[var(--color-muted)]">Operations demo</p>
+            <p className="text-xs text-[var(--color-muted)]">Import & order ops</p>
           </div>
         </div>
         <div className="flex-1 overflow-y-auto p-3">
@@ -126,11 +128,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <p className="text-sm font-semibold">EquipFlow</p>
             </div>
           </div>
-          <div className="hidden items-center gap-2 text-xs text-[var(--color-muted)] sm:flex">
-            <span className="rounded-full bg-emerald-50 px-2 py-1 font-medium text-emerald-700">
-              Demo mode
+          <div className="flex flex-1 items-center justify-end gap-3 md:justify-between">
+            <GlobalSearch />
+            <RoleSwitcher compact />
+            <span className="hidden rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 md:inline">
+              Demo
             </span>
-            <span>Internal ops — import tracking not customer-facing</span>
           </div>
         </header>
         <main className="flex-1 bg-[var(--color-subtle)] px-4 py-6 lg:px-8 lg:py-8">{children}</main>

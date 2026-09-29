@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useAppStore } from "@/store/app-store";
 import { PageHeader } from "@/components/layout/page-header";
-import { Star } from "lucide-react";
+import { Plus, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function VendorsPage() {
   const { vendors, products } = useAppStore();
@@ -13,6 +14,13 @@ export default function VendorsPage() {
       <PageHeader
         title="Vendors"
         description="Global suppliers you import from — each vendor is tied to products and shipment tracking."
+        action={
+          <Link href="/vendors/new">
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" /> Add vendor
+            </Button>
+          </Link>
+        }
       />
 
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">

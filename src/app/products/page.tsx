@@ -1,8 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
+import { Plus } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { PageHeader } from "@/components/layout/page-header";
+import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/products/product-card";
 import { Input, Select } from "@/components/ui/input";
 
@@ -30,6 +33,13 @@ export default function ProductsPage() {
       <PageHeader
         title="Product catalog"
         description="Machines and parts you source globally — linked to vendors, stock, and customer orders."
+        action={
+          <Link href="/products/new">
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" /> Add product
+            </Button>
+          </Link>
+        }
       />
 
       <div className="flex flex-col gap-3 sm:flex-row">
